@@ -1,177 +1,85 @@
-# Questão 01 — Dockerfile para o Lift
+# Questão 01 — Entrega
 
-Entrega no framework **R-T-F** (Role, Task, Format).
-
----
-
-# Prompt
-
-Você é um engenheiro DevOps/SRE especialista em Docker, Kubernetes e Python/Flask.
-
-**Objetivo:** gerar Dockerfile production-grade para o serviço Lift (Python/Flask + gunicorn), com `.dockerignore`, comandos de build/run e justificativa via framework R-T-F.
-
-**Contexto:**
-
-- Projeto em `lift/` com `app.py`, `requirements.txt`, `lib/`, `tests/`
-- Runtime: `gunicorn --bind 0.0.0.0:8080 --workers 4 app:app`
-- Variáveis obrigatórias: `DATABASE_URL`, `API_KEY`
-- Base: `/home/cleverson/repos/iaops-pos`
-- Compatível com Kubernetes, non-root, `EXPOSE 8080`, otimização de camadas
-
-**Estrutura esperada:**
+## Prompt (framework R-T-F)
 
 ```
-lift/
-├── app.py
-├── requirements.txt
-├── lib/
-│   ├── auth.py
-│   └── storage.py
-└── tests/
-    └── test_app.py
+[Role]
+Você é um engenheiro de plataforma sênior, especialista em containerização e
+deploy de aplicações Python em Kubernetes. Conhece boas práticas de Dockerfile
+(imagem mínima, cache de camadas, usuário não-root, .dockerignore, HEALTHCHECK)
+e o runtime de produção com Gunicorn.
+
+[Task]
+Crie um Dockerfile de produção para o serviço Lift, API Flask que será migrada
+de VMs para Kubernetes. O build usa o diretório Q1/ como contexto; o código da
+aplicação está em lift/.
+
+Requisitos obrigatórios:
+- Base: imagem Python slim (Debian bookworm), versão 3.12
+- Dependências de sistema: libpq5 (cliente PostgreSQL para psycopg2-binary)
+- Instalar dependências Python a partir de lift/requirements.txt antes de
+  copiar o código da aplicação (otimizar cache de camadas)
+- Copiar apenas lift/app.py e lift/lib/ para /app
+- Usuário não-root (uid/gid 1000)
+- Variáveis de ambiente DATABASE_URL e API_KEY NÃO devem estar na imagem;
+  serão injetadas no runtime pelo cluster
+- Expor porta 8080
+- Comando de produção exato:
+  gunicorn --bind 0.0.0.0:8080 --workers 4 app:app
+- Incluir HEALTHCHECK no endpoint GET /health
+- Gerar também um .dockerignore que exclua testes, arquivos .env, caches
+  Python e artefatos de documentação da entrega
+
+[Format]
+Responda em três blocos markdown, nesta ordem:
+
+1. **Dockerfile** — arquivo completo, pronto para `docker build -t lift .`
+   executado a partir de Q1/
+2. **.dockerignore** — conteúdo completo
+3. **Justificativa técnica** — lista numerada (máx. 8 itens) explicando cada
+   decisão relevante (base image, ordem COPY/RUN, usuário, HEALTHCHECK, etc.)
 ```
 
-**requirements.txt:**
+## Modelo
 
-```
-Flask==3.0.0
-gunicorn==21.2.0
-requests==2.31.0
-python-dotenv==1.0.0
-psycopg2-binary==2.9.9
-```
+**Composer** (agente Cursor) — execução em 17/05/2026.
 
----
+## Output
 
-# Modelo
+Artefatos gerados e organizados em `Q1/`:
 
-**Claude Sonnet (agente DevOps)** — equilíbrio entre precisão em Dockerfile, segurança (non-root, slim) e compatibilidade de wheels (`psycopg2-binary` em Debian slim vs. riscos em Alpine/musl).
+| Arquivo | Função |
+|---------|--------|
+| `Dockerfile` | Imagem de produção do Lift |
+| `.dockerignore` | Exclusões do contexto de build |
+| `lift/` | Código-fonte da aplicação (conforme enunciado) |
 
----
-
-# Output
-
-## Dockerfile
-
-```dockerfile
-# syntax=docker/dockerfile:1
-
-FROM python:3.12-slim-bookworm
-
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    APP_HOME=/app \
-    PORT=8080
-
-WORKDIR ${APP_HOME}
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpq5 \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd --gid 1000 app \
-    && useradd --uid 1000 --gid app --create-home --shell /usr/sbin/nologin app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY --chown=app:app app.py .
-COPY --chown=app:app lib/ lib/
-
-USER app
-
-EXPOSE 8080
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "app:app"]
-```
-
-## .dockerignore
-
-```
-.git
-.gitignore
-__pycache__
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv
-venv
-env
-.env
-.env.*
-.pytest_cache
-.coverage
-htmlcov
-.mypy_cache
-.ruff_cache
-tests/
-*.md
-Dockerfile*
-.dockerignore
-*.egg-info
-dist
-build
-```
-
-## Build e run
+Build:
 
 ```bash
-cd /home/cleverson/repos/iaops-pos/lift
-
-docker build -t lift:latest .
-
+cd Hill_Valley_Tech/Q1
+docker build -t lift .
 docker run --rm -p 8080:8080 \
-  -e DATABASE_URL='postgresql://user:pass@host:5432/db' \
-  -e API_KEY='sua-api-key' \
-  lift:latest
+  -e DATABASE_URL=postgresql://user:pass@host:5432/lift \
+  -e API_KEY=changeme \
+  lift
 ```
 
-## Árvore de arquivos
+## Justificativa (R-T-F no prompt)
 
-```
-iaops-pos/
-├── README.md
-└── lift/
-    ├── QUESTAO-01.md
-    ├── Dockerfile
-    ├── .dockerignore
-    ├── app.py
-    ├── requirements.txt
-    ├── lib/
-    │   ├── auth.py
-    │   └── storage.py
-    └── tests/
-        └── test_app.py
-```
+| Componente | Onde aparece no prompt | Efeito na resposta |
+|------------|------------------------|--------------------|
+| **Role** | Bloco `[Role]` — engenheiro de plataforma sênior, K8s, Dockerfile | Orienta tom técnico, escolha de slim image, usuário não-root e HEALTHCHECK |
+| **Task** | Bloco `[Task]` — requisitos numerados (base, libpq, ordem de COPY, gunicorn, env vars externas) | Delimita escopo e evita omissões (porta 8080, workers 4, sem secrets na imagem) |
+| **Format** | Bloco `[Format]` — três seções markdown fixas | Garante entrega estruturada: Dockerfile, .dockerignore e justificativa separados |
 
----
+### Decisões técnicas do Dockerfile
 
-# Justificativa
-
-## Role
-
-Engenheiro DevOps/SRE — prioriza imagem enxuta, execução segura e deploy em Kubernetes sem alterar o contrato do app (`gunicorn` na porta 8080).
-
-## Task
-
-- Cache de dependências: `requirements.txt` copiado antes do código da aplicação.
-- Segurança: usuário não-root (UID/GID 1000), compatível com `securityContext` no Kubernetes.
-- Runtime PostgreSQL: pacote `libpq5` para uso com `psycopg2-binary`.
-- Imagem menor: `tests/`, artefatos Python e `.env` excluídos via `.dockerignore`.
-- Sinais POSIX: `CMD` em forma exec para repasse correto ao processo principal.
-
-## Format
-
-Documentação e entrega acadêmica em Markdown (`QUESTAO-01.md`); artefatos operacionais (`Dockerfile`, `.dockerignore`) versionados em `lift/`.
-
-## Decisões técnicas
-
-| Decisão | Motivo |
-|--------|--------|
-| `python:3.12-slim-bookworm` | Imagem menor que `full`; wheels de `psycopg2-binary` estáveis (glibc) |
-| Debian slim vs. Alpine | Evita incompatibilidades musl com dependências nativas |
-| `USER app` após `COPY --chown` | Processo sem privilégios de root no pod |
-| `DATABASE_URL` / `API_KEY` em runtime | Injetadas via `docker run`, `env` ou `Secret` no K8s — não baked na imagem |
-| `*.md` no `.dockerignore` | Documentação fora da imagem de produção |
+1. **python:3.12-slim-bookworm** — imagem menor que `full`, com glibc compatível com wheels do psycopg2-binary.
+2. **libpq5** — biblioteca de runtime exigida pelo psycopg2-binary sem compilar extensões no build.
+3. **COPY requirements antes do código** — camada de dependências reutilizada quando só o código muda.
+4. **Usuário `app` (uid 1000)** — processo não roda como root no pod Kubernetes.
+5. **Sem DATABASE_URL/API_KEY na imagem** — secrets vêm de Secret/ConfigMap no deploy.
+6. **HEALTHCHECK em /health** — kubelet e orquestrador detectam container unhealthy.
+7. **`.dockerignore` com `lift/tests/`** — testes não entram na imagem de produção.
+8. **CMD em forma exec** — sinal SIGTERM chega ao Gunicorn para shutdown gracioso no K8s.

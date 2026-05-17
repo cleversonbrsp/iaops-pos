@@ -15,10 +15,10 @@ env
 htmlcov
 .mypy_cache
 .ruff_cache
-tests/
 *.md
 Dockerfile*
 .dockerignore
 *.egg-info
 dist
 build
+lift/tests/
