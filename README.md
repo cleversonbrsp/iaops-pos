@@ -15,3 +15,4 @@ Entregas Pós IAOPS.
 | 01 | Dockerfile para o Lift | [Enunciado](Hill_Valley_Tech/Q1/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q1/Entrega.md) |
 | 02 | Script de backup do Ledger | [Enunciado](Hill_Valley_Tech/Q2/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q2/Entrega.md) |
 | 03 | Relatório de redução de custos cloud | [Enunciado](Hill_Valley_Tech/Q3/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q3/Entrega.md) |
+| 04 | Relatório mensal de transações do Ledger | [Enunciado](Hill_Valley_Tech/Q4/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q4/Entrega.md) |
