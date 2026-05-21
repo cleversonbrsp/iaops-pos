@@ -19,3 +19,4 @@ Entregas Pós IAOPS.
 | 05 | Modernizar deployment legado (Chronos) | [Enunciado](Hill_Valley_Tech/Q5/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q5/Entrega.md) |
 | 06 | Módulo Terraform S3 (padrão interno) | [Enunciado](Hill_Valley_Tech/Q6/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q6/Entrega.md) |
 | 07 | Runbook alerta memória Chronos | [Enunciado](Hill_Valley_Tech/Q7/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q7/Entrega.md) |
+| 08 | Postmortem incidente Chronos v2.48.0 | [Enunciado](Hill_Valley_Tech/Q8/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q8/Entrega.md) |
