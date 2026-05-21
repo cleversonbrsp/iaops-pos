@@ -13,3 +13,4 @@ Entregas Pós IAOPS.
 | Questão | Descrição | Enunciado | Entrega |
 |--------|-----------|-----------|---------|
 | 01 | Dockerfile para o Lift | [Enunciado](Hill_Valley_Tech/Q1/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q1/Entrega.md) |
+| 02 | Script de backup do Ledger | [Enunciado](Hill_Valley_Tech/Q2/Enunciado.md) | [Entrega](Hill_Valley_Tech/Q2/Entrega.md) |
