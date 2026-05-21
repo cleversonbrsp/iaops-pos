@@ -52,7 +52,7 @@ created_at vs completed_at, tratamento de valores negativos em refund).
 
 ## Modelo
 
-**Composer** (agente Cursor) — execução em 21/05/2026.
+**Composer**
 
 ## Output
 

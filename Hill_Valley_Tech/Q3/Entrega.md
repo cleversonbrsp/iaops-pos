@@ -55,7 +55,7 @@ Recomendação para Goldie.
 
 ## Modelo
 
-**Composer** (agente Cursor) — execução em 21/05/2026.
+**Composer**
 
 ## Output
 

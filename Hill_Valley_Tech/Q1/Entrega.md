@@ -42,7 +42,7 @@ Responda em três blocos markdown, nesta ordem:
 
 ## Modelo
 
-**Composer** (agente Cursor) — execução em 17/05/2026.
+**Composer**
 
 ## Output
 
